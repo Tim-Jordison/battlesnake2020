@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Giftbit/sam-scaffold#readme",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.35",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "@types/chai": "^4.1.7",

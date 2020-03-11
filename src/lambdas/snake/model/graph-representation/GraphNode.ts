@@ -2,6 +2,7 @@ import {Coordinate} from "../battlesnake-official/Coordinate";
 
 export interface GraphNode extends Coordinate {
     type: NodeType;
+    turnsUntilVacant: number;
 }
 
-export type NodeType = "empty" | "food" | "snake_head" | "snake_body" | "snake_tail";
+export type NodeType = "vacant" | "food" | "occupied";

@@ -1,38 +1,63 @@
 import {Board} from "../battlesnake-official/Board";
-import {GraphNode, NodeType} from "./Node";
+import {GraphNode, NodeType} from "./GraphNode";
 import {Coordinate} from "../battlesnake-official/Coordinate";
+import {Snake} from "../battlesnake-official/Snake";
+import {getValidNeighbours} from "../../utils/boardUtils";
 
 export class GameGraph {
-    board: GraphNode[][];
+    graph: GraphNode[][];
 
     constructor(board: Board) {
-        this.board = [];
+        this.graph = [];
         for (let x = 0; x < board.width; x++) {
-            this.board[x] = [];
+            this.graph[x] = [];
             for (let y = 0; y < board.height; y++) {
-                this.board[x][y] = {
+                this.graph[x][y] = {
                     x: x,
                     y: y,
-                    type: "empty"
+                    type: "vacant",
+                    turnsUntilVacant: 0
                 }
             }
         }
 
         for (let food of board.food) {
-            this.board[food.x][food.y].type = "food";
+            this.graph[food.x][food.y].type = "food";
         }
 
         for (let snake of board.snakes) {
+            let foodNextToHead = this.hasFoodNexToHead(snake, board);
             for (let i = 0; i < snake.body.length; i++) {
-                let bodyPartType: NodeType = "snake_body";
-                if (i === 0) {
-                    bodyPartType = "snake_head"
-                } else if (i === snake.body.length - 1 && snake.health < 100 /* if health is 100 then tail won't disappear */) {
-                    bodyPartType = "snake_tail"
+                let type: NodeType = "occupied";
+                let turnsUntilVacant = snake.body.length - i - 1 /* consider a snake of length 1 */;
+
+                if (snake.health === 100) {
+                    turnsUntilVacant += 1;
                 }
-                const bodyPartCoord: Coordinate = snake.body[i];
-                this.board[bodyPartCoord.x][bodyPartCoord.y].type = bodyPartType;
+
+                if (foodNextToHead) {
+                    turnsUntilVacant += 1;
+                }
+
+                if (i === snake.body.length - 1 && snake.health < 100 && !foodNextToHead) {
+                    type = "vacant";
+                }
+                const bodyPart: Coordinate = snake.body[i];
+                this.graph[bodyPart.x][bodyPart.y].type = type;
+                this.graph[bodyPart.x][bodyPart.y].turnsUntilVacant = turnsUntilVacant;
             }
         }
     }
+
+    private hasFoodNexToHead(snake, board: Board) {
+        const neighbours = getValidNeighbours(snake.body[0], board);
+
+        for (const neighbour of neighbours) {
+            if (this.graph[neighbour.x][neighbour.y].type === "food") {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+

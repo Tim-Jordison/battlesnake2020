@@ -8,11 +8,14 @@ Resources:
   SnakeFunction:
     Type: AWS::Serverless::Function
     Properties:
+#      AutoPublishAlias: battlesnake2020 - required for provisioned concurrency
       CodeUri: ../dist/snake/snake.zip
       Handler: index.handler
       Runtime: nodejs10.x
       MemorySize: 128
-      Timeout: 30 # seconds, 300 max
+      Timeout: 5 # seconds
+#      ProvisionedConcurrencyConfig:
+#        ProvisionedConcurrentExecutions: 5
       Events:
         RestApi:
           Type: Api

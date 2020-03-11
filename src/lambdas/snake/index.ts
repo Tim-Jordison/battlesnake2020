@@ -1,6 +1,7 @@
 import * as cassava from "cassava";
 import {Game} from "./model/battlesnake-official/Game";
-import {getAllowedMoves} from "./utils/allowedMoves";
+import {doRandomWalk, Walk} from "./utils/randomWalk";
+// import {getAllowedMoves} from "./utils/allowedMoves";
 
 export const router = new cassava.Router();
 
@@ -24,15 +25,28 @@ router.route("/start")
 router.route("/move")
     .method("POST")
     .handler(evt => {
+        const start = new Date();
+        console.log(JSON.stringify(evt));
         const game: Game = evt.body;
         console.log("Game: " + JSON.stringify(game, null, 4));
-        const moves = getAllowedMoves(game);
+        let best: Walk;
+        let elapsedTimeMs = (new Date()).getMilliseconds() - start.getMilliseconds();
+        while (elapsedTimeMs < 100) {
+            const walk = doRandomWalk(game);
+            if (!best) {
+                best = walk;
+            } else if (best && walk.turn > best.turn) {
+                best = walk;
+            }
+            elapsedTimeMs = (new Date()).getMilliseconds() - start.getMilliseconds();
+        }
 
+        console.log("turn: " + game.turn +  " move: " + best.direction);
         return {
             statusCode: cassava.httpStatusCode.success.OK,
             body: {
-                "move": moves[Math.floor(Math.random() * moves.length)],
-                "shout": "I am moving left!"
+                "move": best.direction,
+                "shout": best.direction
             }
         };
     });

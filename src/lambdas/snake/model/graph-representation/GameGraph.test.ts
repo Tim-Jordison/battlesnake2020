@@ -38,7 +38,7 @@ describe("/GameGraph", () => {
         };
         const gameGraph = new GameGraph(board);
         chai.assert.deepEqual(gameGraph, {
-            "board": [
+            "graph": [
                 [
                     {
                         "x": 0,

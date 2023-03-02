@@ -30,7 +30,7 @@
     "chai": "^4.2.0",
     "file-loader": "^3.0.1",
     "json-loader": "^0.5.7",
-    "mocha": "^6.0.2",
+    "mocha": "^6.2.3",
     "rimraf": "^2.6.3",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.2",
